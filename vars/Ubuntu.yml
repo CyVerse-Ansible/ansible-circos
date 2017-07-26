@@ -1,0 +1,5 @@
+---
+
+DEPS:
+  - "libfreetype6"
+  - "libgd-dev"

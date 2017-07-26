@@ -1,0 +1,5 @@
+---
+
+DEPS:
+  - "freetype"
+  - "gd-devel"

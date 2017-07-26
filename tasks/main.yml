@@ -1,0 +1,98 @@
+---
+
+- name: Gather OS specific variables
+  include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ ansible_distribution }}-{{ ansible_distribution_major_version}}.yml"
+    - "{{ ansible_distribution }}.yml"
+
+- name: Install cpanm on Ubuntu
+  package:
+    name: "cpanminus"
+    state: present
+  when: ansible_distribution == "Ubuntu"
+
+- block:
+  - name: Install Perl-CPAN on CentOS
+    package:
+      name: "perl-CPAN.x86_64"
+      state: present
+
+  - name: Install cpanm CentOS
+    shell: >
+      curl -L http://cpanmin.us | perl - App::cpanminus
+  when: ansible_distribution == "CentOS"
+
+- name: Install dependencies
+  package:
+    name: "{{ DEPS }}"
+    state: present
+
+- name: Install perl libraries
+  cpanm:
+    name: "{{ item }}"
+    use_sudo: yes
+    notest: yes
+  with_items:
+    - "Carp"
+    - "Clone"
+    - "Config::General"
+    - "Cwd"
+    - "Data::Dumper"
+    - "Digest::MD5"
+    - "File::Basename"
+    - "File::Spec::Functions"
+    - "File::Temp"
+    - "FindBin"
+    - "Font::TTF::Font"
+    - "GD"
+    - "GD::Image"
+    - "Getopt::Long"
+    - "IO::File"
+    - "List::MoreUtils"
+    - "List::Util"
+    - "Math::Round"
+    - "Math::Trig"
+    - "Math::VecStat"
+    - "Memoize"
+    - "Params::Validate"
+    - "Pod::Usage"
+    - "POSIX"
+    - "Readonly"
+    - "Regexp::Common"
+    - "Statistics::Basic"
+    - "Storable"
+    - "Sys::Hostname"
+    - "Text::Balanced"
+    - "Text::Format"
+    - "Time::HiRes"
+
+- name: Download circos
+  get_url:
+    url: "http://circos.ca/distribution/circos-{{ VERSION }}.tgz"
+    dest: "/tmp/circos-{{ VERSION }}.tgz"
+
+- name: Unarchive circos
+  unarchive:
+    src: "/tmp/circos-{{ VERSION }}.tgz"
+    dest: "/home/{{ ATMOUSERNAME }}"
+    remote_src: yes
+
+- name: Download circos course
+  get_url:
+    url: "http://circos.ca/distribution/circos-course-2017.tgz"
+    dest: "/home/{{ ATMOUSERNAME }}/circos-course-2017.tgz"
+
+- name: Unarchive circos course
+  unarchive:
+    src: "/home/{{ ATMOUSERNAME }}/circos-course-2017.tgz"
+    dest: "/home/{{ ATMOUSERNAME }}"
+    remote_src: yes
+
+- name: Cleanup temporary files
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - "/tmp/circos-{{ VERSION }}.tgz"
+    - "/home/{{ ATMOUSERNAME }}/circos-course-2017.tgz"
