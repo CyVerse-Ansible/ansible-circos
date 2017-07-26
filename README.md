@@ -7,4 +7,4 @@ Installs [Circos](http://circos.ca/)
 | Variable                | Required | Default | Choices                   | Comments                                   |
 |-------------------------|----------|---------|---------------------------|--------------------------------------------|
 | VERSION                 | yes      | 0.69-5  | Any version number        | Controls the version of installed software |
-| VERSION                 | yes      |         |                           | Username to put files in home directory    |
+| ATMOUSERNAME            | yes      |         |                           | Username to put files in home directory    |
